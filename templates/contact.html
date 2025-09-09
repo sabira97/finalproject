@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bizimlə əlaqə saxlayın</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="container">
+  <div class="card form-card">
+    <h1>Bizimlə əlaqə saxlayın</h1>
+    <p class="subtitle">Formanı doldurun — ən qısa zamanda cavab verəcəyik.</p>
+
+    <form id="contact-form" novalidate>
+      <div class="row">
+        <div class="field">
+          <label for="name">Ad və soyad</label>
+          <input id="name" name="name" type="text" placeholder="Adınız">
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="email@misal.com">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="message">Mesaj</label>
+        <textarea id="message" name="message" placeholder="Mesajınız"></textarea>
+      </div>
+
+      <!-- Honeypot -->
+      <div class="hp" style="display:none;">
+        <label for="hp">Sayt</label>
+        <input id="hp" name="hp" type="text" tabindex="-1" autocomplete="off">
+      </div>
+
+
+      <button id="submitBtn" class="btn" type="submit">Göndər</button>
+      <div id="alert"></div>
+    </form>
+
+    <div class="socials">
+      <a href="https://facebook.com/share/1AvLUT2pAK/" target="_blank" class="facebook"><i class="fab fa-facebook"></i></a>
+      <a href="https://instagram.com/aesma.edu.az?igsh=MXBseDdyamVnaDNtNw==" target="_blank" class="instagram"><i class="fab fa-instagram"></i></a>
+      <a href="https://t.me/aesma_edu_az" target="_blank" class="telegram"><i class="fab fa-telegram"></i></a>
+      <a href="https://www.linkedin.com/company/aesma-edu-az/" target="_blank" class="linkedin"><i class="fab fa-linkedin"></i></a>
+      <a href="https://wa.me/+994102365097" target="_blank" class="whatsapp"><i class="fab fa-whatsapp"></i></a>
+    </div>
+
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+:root {
+  --primary: #2A314D;
+  --bg: #f5f6fa;
+  --card: #fff;
+  --border: #e5e7eb;
+  --text: #1f2937;
+}
+
+* { box-sizing: border-box; margin:0; padding:0; }
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(180deg, var(--bg), #eef0f6);
+  color: var(--text);
+}
+
+.container {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 15px 40px rgba(42,49,77,0.15);
+}
+
+h1 {
+  color: var(--primary);
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: #475569;
+  margin-bottom: 24px;
+}
+
+.field { display: flex; flex-direction: column; margin-bottom: 16px; }
+label { margin-bottom: 6px; font-weight: 600; }
+input, textarea {
+  padding: 14px; border:1px solid var(--border); border-radius:12px;
+  font-size:15px; outline:none; transition: 0.2s;
+}
+input:focus, textarea:focus { border-color: var(--primary); box-shadow:0 0 0 4px rgba(42,49,77,0.1); }
+textarea { min-height:140px; resize: vertical; }
+
+.row { display: flex; gap:12px; flex-wrap:wrap; }
+.row .field { flex:1; }
+
+.btn {
+  width:100%; padding:14px;
+  border:none; border-radius:12px;
+  background: var(--primary); color:white;
+  font-weight:700; font-size:16px;
+  cursor:pointer; transition:0.2s;
+}
+.btn:hover { filter:brightness(1.05); }
+
+.alert { margin-top:12px; padding:12px; border-radius:12px; font-size:14px; line-height:1.4; }
+
+.socials {
+  display:flex; justify-content:center; gap:16px; margin-top:24px;
+}
+.socials a { font-size:24px; text-decoration:none; transition:none; }
+.socials a.facebook { color:#1877F2; }
+.socials a.instagram { color:#C13584; }
+.socials a.telegram { color:#0088cc; }
+.socials a.linkedin { color:#0A66C2; }
+.socials a.whatsapp { color:#25D366; }
+
+.hp {
+  display: none; /* Bu sahəni tam gizlədir */
+}
