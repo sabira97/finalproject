@@ -110,3 +110,12 @@ textarea { min-height:140px; resize: vertical; }
 .hp {
   display: none; /* Sahe gizleme*/
 }
+
+#alert {
+  margin-top:12px;
+  padding:12px;
+  border-radius:12px;
+  font-size:14px;
+  line-height:1.4;
+  text-align:center;
+}
