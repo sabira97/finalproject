@@ -128,4 +128,4 @@ def admin_messages():
     return render_template("admin_messages.html", messages=messages, primary=PRIMARY)
 
 if __name__ == "__main__":
-    app.run(debug=True, host="localhost", port=5555)
+    app.run(debug=True, host="localhost", port=5500)
