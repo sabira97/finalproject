@@ -2,38 +2,73 @@
 <html lang="az">
 <head>
 <meta charset="UTF-8">
-<title>Admin Mesajlar</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bizimlə əlaqə saxlayın</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="../static/css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-<h1 style="color: {{ primary }}">Gələn mesajlar</h1>
 
-<table border="1" cellpadding="8" cellspacing="0">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Ad Soyad</th>
-            <th>Email</th>
-            <th>Mesaj</th>
-            <th>Vaxt</th>
-            <th>Cavab</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for msg in messages %}
-        <tr>
-            <td>{{ msg[0] }}</td>
-            <td>{{ msg[1] }}</td>
-            <td>{{ msg[2] }}</td>
-            <td>{{ msg[3] }}</td>
-            <td>{{ msg[4] }}</td>
-            <td>
-                <a href="mailto:{{ msg[2] }}?subject=Mesajınıza cavab&body=">Cavab ver</a>
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+<div class="container">
+  <div class="card form-card">
+    <h1>Bizimlə əlaqə saxlayın</h1>
+    <p class="subtitle">Formanı doldurun, ən qısa zamanda cavab verəcəyik.</p>
 
+    <form id="contact-form" novalidate>
+      <div class="row">
+        <div class="field">
+          <label for="first_name">Ad</label>
+          <input id="first_name" name="first_name" type="text" placeholder="Adınız">
+        </div>
+        <div class="field">
+          <label for="last_name">Soyad</label>
+          <input id="last_name" name="last_name" type="text" placeholder="Soyadınız">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" placeholder="email@misal.com">
+      </div>
+
+      <div class="field">
+        <label for="message">Mesaj</label>
+        <textarea id="message" name="message" placeholder="Mesajınız"></textarea>
+      </div>
+
+      <!-- Honeypot -->
+      <div class="hp">
+        <label for="hp">Sayt</label>
+        <input id="hp" name="hp" type="text" tabindex="-1" autocomplete="off">
+      </div>
+
+      <button id="submitBtn" class="btn" type="submit">Göndər</button>
+      <div id="alert"></div>
+    </form>
+
+    <div class="socials">
+      <a href="https://facebook.com/share/1AvLUT2pAK/" target="_blank" class="facebook"><i class="fab fa-facebook"></i></a>
+      <a href="https://instagram.com/aesma.edu.az?igsh=MXBseDdyamVnaDNtNw==" target="_blank" class="instagram"><i class="fab fa-instagram"></i></a>
+      <a href="https://t.me/aesma_edu_az" target="_blank" class="telegram"><i class="fab fa-telegram"></i></a>
+      <a href="https://www.linkedin.com/company/az%C9%99rbaycan-%C9%99m%C9%99k-v%C9%99-sosial-m%C3%BCnasiib%C9%99tl%C9%99r-akademiyas%C4%B1/" target="_blank" class="linkedin"><i class="fab fa-linkedin"></i></a>
+      <a href="https://wa.me/+994102365097" target="_blank" class="whatsapp"><i class="fab fa-whatsapp"></i></a>
+      <a href="https://x.com/aesma_edu_az" target="_blank" class="x"><i class="fab fa-x-twitter"></i></a>
+      <a href="https://youtube.com/@aesmaofficial" target="_blank" class="youtube"><i class="fab fa-youtube"></i></a>
+      <a href="mailto:info@aesma.edu.az" target="_blank" class="email"><i class="fas fa-envelope"></i></a>  
+      <a href="https://aesma.edu.az/az" target="_blank" class="website"><i class="fas fa-globe"></i></a>
+    </div>
+
+    <div class="address">
+        <a href="https://maps.app.goo.gl/nCHrphgofJz2UotSA" target="_blank">
+            <i class="fas fa-map-marker-alt"></i>
+            Azadlıq prospekti 181, Bakı, Azərbaycan
+        </a>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
