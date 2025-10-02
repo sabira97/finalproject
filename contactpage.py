@@ -1,11 +1,12 @@
 from flask import Flask, request, jsonify, render_template
-from datetime import datetime, timedelta
 from pathlib import Path
 from ipaddress import ip_address
 import json
 import re
 import smtplib
 from email.mime.text import MIMEText
+import time
+import traceback
 
 app = Flask(__name__)
 
@@ -13,12 +14,20 @@ PRIMARY = "#2A314D"
 JSON_PATH = Path("messages.json")
 last_submit_by_ip = {}
 
-# JSON komekcileri
+# SMTP konfigurasiya
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+EMAIL_USER = "shahpelengovaz@gmail.com"          # Buraya öz gmail ünvanını yaz
+EMAIL_PASS = "app_password_here"        # Buraya Gmail App Password yaz
+EMAIL_TO = "ruslan.hamidov@holberton.us"   # Mesajı qəbul edən email
+
+# JSON faylını yoxla və yarat
 def init_json():
     if not JSON_PATH.exists():
         with open(JSON_PATH, "w", encoding="utf-8") as f:
             json.dump([], f, ensure_ascii=False, indent=2)
 
+# Mesajı JSON fayla yaz
 def save_message_json(first_name, last_name, email, message, ip):
     init_json()
     with open(JSON_PATH, "r+", encoding="utf-8") as f:
@@ -29,7 +38,7 @@ def save_message_json(first_name, last_name, email, message, ip):
             "email": email,
             "message": message,
             "ip": str(ip),
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         })
         f.seek(0)
         json.dump(data, f, ensure_ascii=False, indent=2)
@@ -49,24 +58,18 @@ def validate_payload(data: dict):
     hp = (data.get("hp") or "").strip()
 
     if not FIRST_NAME_RE.match(first_name):
-        errors["first_name"] = "Ad yalnız hərflərdən ibarət olmalı və böyük hərflə başlamalıdır."
+        errors["first_name"] = "Ad düzgün deyil."
     if not LAST_NAME_RE.match(last_name):
-        errors["last_name"] = "Soyad yalnız hərflərdən ibarət olmalı və böyük hərflə başlamalıdır."
+        errors["last_name"] = "Soyad düzgün deyil."
     if not EMAIL_RE.match(email):
-        errors["email"] = "Email düzgün formatda deyil."
+        errors["email"] = "Email düzgün deyil."
     if not (10 <= len(message) <= 2000):
-        errors["message"] = "Mesaj 10–2000 simvol aralığında olmalıdır."
+        errors["message"] = "Mesaj 10–2000 simvol olmalıdır."
     if hp:
-        errors["hp"] = "Honeypot dolu gəlib (bot şübhəsi)."
+        errors["hp"] = "Bot şübhəsi (honeypot doludur)."
     return errors
 
-# Email funksiyasi
-SMTP_SERVER = "smtp.aesma.edu.az"
-SMTP_PORT = 587
-EMAIL_USER = "info@aesma.edu.az"
-EMAIL_PASS = "email_sifresi"
-EMAIL_TO = "info@aesma.edu.az"
-
+# Email göndərən funksiya
 def send_email(first_name, last_name, email, message):
     subject = f"Yeni mesaj: {first_name} {last_name}"
     body = f"Ad: {first_name}\nSoyad: {last_name}\nEmail: {email}\nMesaj:\n{message}"
@@ -74,19 +77,25 @@ def send_email(first_name, last_name, email, message):
     msg["Subject"] = subject
     msg["From"] = EMAIL_USER
     msg["To"] = EMAIL_TO
+    # message_body = request.form.get('message')
+    # msg.attach(MIMEText(message_body, 'plain'))
+
     try:
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
             server.starttls()
             server.login(EMAIL_USER, EMAIL_PASS)
-            server.sendmail(EMAIL_USER, EMAIL_TO, msg.as_string())
+            server.send_message(msg)
+            print("Email göndərildi.")
     except Exception as e:
-        print("Email göndərilərkən xəta:", e)
+        print("Email göndərilərkən xəta:")
+        traceback.print_exc()
 
-# Routlar
+# Kontakt səhifəsi
 @app.get("/contact")
 def contact_page():
     return render_template("contact.html", primary=PRIMARY)
 
+# API POST — Əlaqə formu
 @app.post("/api/contact")
 def api_contact():
     data = request.get_json(force=True, silent=True) or {}
@@ -94,20 +103,20 @@ def api_contact():
     if errors:
         return jsonify({"error": "; ".join(f"{k}: {v}" for k, v in errors.items())}), 400
 
-    # Rate limiti
+    # IP və Rate Limit
     try:
-        client_ip = request.headers.get("X-Forwarded-For", request.remote_addr) or "0.0.0.0"
-        client_ip = ip_address(client_ip.split(",")[0].strip())
+        client_ip = request.headers.get("X-Forwarded-For", request.remote_addr).split(",")[0].strip()
+        client_ip = ip_address(client_ip)
     except Exception:
         client_ip = "0.0.0.0"
 
-    now = datetime.utcnow()
+    now = time.time()
     last = last_submit_by_ip.get(client_ip)
-    if last and (now - last) < timedelta(seconds=15):
+    if last and (now - last) < 15:
         return jsonify({"error": "Çox tez-tez göndərirsiniz. 15 saniyə sonra yenidən cəhd edin."}), 429
     last_submit_by_ip[client_ip] = now
 
-    # JSON
+    # JSON yaddaşa yaz
     save_message_json(
         first_name=data["first_name"].strip(),
         last_name=data["last_name"].strip(),
@@ -116,7 +125,7 @@ def api_contact():
         ip=client_ip
     )
 
-    # Email gondermek
+    # Email göndər
     send_email(
         first_name=data["first_name"].strip(),
         last_name=data["last_name"].strip(),
@@ -126,6 +135,7 @@ def api_contact():
 
     return jsonify({"ok": True})
 
+# Admin mesajlara baxış
 @app.get("/admin/messages")
 def admin_messages():
     init_json()
@@ -133,5 +143,6 @@ def admin_messages():
         messages = json.load(f)
     return render_template("admin_messages.html", messages=messages, primary=PRIMARY)
 
+# Serveri işə sal
 if __name__ == "__main__":
     app.run(debug=True, host="localhost", port=5550)
